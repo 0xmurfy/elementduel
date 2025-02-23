@@ -4,9 +4,9 @@ declare global {
   interface Window {
     ethereum?: Eip1193Provider & {
       isMetaMask?: boolean;
-      on?: (...args: any[]) => void;
-      removeListener?: (...args: any[]) => void;
-      request: (args: { method: string; params?: any[] }) => Promise<any>;
+      on?: (event: string, handler: (...args: unknown[]) => void) => void;
+      removeListener?: (event: string, handler: (...args: unknown[]) => void) => void;
+      request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
     };
   }
 } 

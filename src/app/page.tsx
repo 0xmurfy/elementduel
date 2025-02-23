@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { ethers } from 'ethers';
 import { useSearchParams } from 'next/navigation';
 import { ELEMENTALDUEL_ADDRESS, ELEMENTALDUEL_ABI } from '../config/contracts';
@@ -25,7 +25,7 @@ enum Element {
   Air      // Beats Earth
 }
 
-enum GameState {
+enum GamePhase {
   Created,
   MovesCommitted,
   MovesRevealed,
@@ -38,12 +38,21 @@ interface Move {
   hash?: string;
 }
 
-export default function Home() {
+interface GameState {
+  player1: string;
+  player2: string;
+  stake: bigint;
+  state: GamePhase;
+  player1Wins: bigint;
+  player2Wins: bigint;
+}
+
+function GameComponent() {
   const searchParams = useSearchParams();
   const [account, setAccount] = useState<string>('');
   const [gameId, setGameId] = useState<string>('');
   const [stake, setStake] = useState<string>('0.01');
-  const [gameState, setGameState] = useState<any>(null);
+  const [gameState, setGameState] = useState<GameState | null>(null);
   const [loading, setLoading] = useState<{[key: string]: boolean}>({
     wallet: false,
     create: false,
@@ -95,7 +104,7 @@ export default function Home() {
       setLoading(prev => ({ ...prev, wallet: true }));
       try {
         await checkNetwork();
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' }) as string[];
         setAccount(accounts[0]);
         setError('');
       } catch (error) {
@@ -269,26 +278,33 @@ export default function Home() {
 
   useEffect(() => {
     if (gameId) {
-      fetchGameState();
+      const fetchData = async () => {
+        await fetchGameState();
+      };
+      fetchData();
     }
-  }, [gameId]);
+  }, [gameId, fetchGameState]);
 
   useEffect(() => {
     const ethereum = window.ethereum;
     if (ethereum && ethereum.on) {
-      ethereum.on('chainChanged', (chainId: string) => {
+      const handleChainChange = (...args: unknown[]) => {
+        const chainId = args[0] as string;
         if (chainId !== BASE_SEPOLIA_CHAIN_ID) {
           setError('Please switch to Base Sepolia network');
         } else {
           setError('');
         }
-      });
+      };
+      
+      ethereum.on('chainChanged', handleChainChange);
+      
+      return () => {
+        if (ethereum.removeListener) {
+          ethereum.removeListener('chainChanged', handleChainChange);
+        }
+      };
     }
-    return () => {
-      if (ethereum && ethereum.removeListener) {
-        ethereum.removeListener('chainChanged', () => {});
-      }
-    };
   }, []);
 
   useEffect(() => {
@@ -309,7 +325,7 @@ export default function Home() {
   }, [gameId]);
 
   const renderMoveSelection = () => {
-    if (!gameState || gameState.state === GameState.Finished) return null;
+    if (!gameState || gameState.state === GamePhase.Finished) return null;
 
     return (
       <div className="mt-8 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
@@ -342,9 +358,9 @@ export default function Home() {
             <div className="p-4 bg-gray-50 rounded-lg">
               <p className="font-medium text-gray-700">Current Phase:</p>
               <p className="text-lg font-bold text-blue-600">
-                {GameState[gameState.state]}
+                {GamePhase[gameState.state]}
               </p>
-              {gameState.state > GameState.Created && (
+              {gameState.state > GamePhase.Created && (
                 <div className="mt-2">
                   <p className="font-medium text-gray-700">Score:</p>
                   <p className="text-sm">
@@ -355,7 +371,7 @@ export default function Home() {
               )}
             </div>
 
-            {gameState.state === GameState.Created && (
+            {gameState.state === GamePhase.Created && (
               <button
                 onClick={commitMoves}
                 disabled={loading.commit}
@@ -372,7 +388,7 @@ export default function Home() {
               </button>
             )}
 
-            {gameState.state === GameState.MovesCommitted && moveHashes.length > 0 && (
+            {gameState.state === GamePhase.MovesCommitted && moveHashes.length > 0 && (
               <button
                 onClick={revealMoves}
                 disabled={loading.reveal}
@@ -395,7 +411,7 @@ export default function Home() {
   };
 
   const renderShareSection = () => {
-    if (!gameId || !gameState || gameState.state !== GameState.Created) return null;
+    if (!gameId || !gameState || gameState.state !== GamePhase.Created) return null;
 
     return (
       <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
@@ -566,9 +582,9 @@ export default function Home() {
               </div>
               <div className="space-y-2">
                 <p className="font-semibold text-gray-700">Game Phase</p>
-                <p className="text-lg font-medium">{GameState[gameState.state]}</p>
+                <p className="text-lg font-medium">{GamePhase[gameState.state]}</p>
               </div>
-              {gameState.state > GameState.Created && (
+              {gameState.state > GamePhase.Created && (
                 <>
                   <div className="space-y-2">
                     <p className="font-semibold text-gray-700">Player 1 Wins</p>
@@ -587,5 +603,25 @@ export default function Home() {
         {account && gameState && renderMoveSelection()}
       </div>
     </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen p-8 bg-gray-50">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex justify-between items-center mb-8">
+            <h1 className="text-4xl font-bold text-gray-900">Elemental Duel</h1>
+          </div>
+          <div className="mt-8 bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-center">
+            <span className="animate-spin mr-2">⚡</span>
+            Loading...
+          </div>
+        </div>
+      </main>
+    }>
+      <GameComponent />
+    </Suspense>
   );
 }
