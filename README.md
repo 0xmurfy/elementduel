@@ -1,67 +1,36 @@
-# Elemental Duel
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-A Web3 PvP battle game on Base Chain (Sepolia) where players compete in a best-of-three elemental duel. Players stake ETH and battle using elemental moves in a commit-reveal scheme.
+## Getting Started
 
-## Game Rules
-
-- Each player commits three moves upfront
-- Each move is one of four elements:
-  - 🔥 Fire (beats Air)
-  - 💧 Water (beats Fire)
-  - 🌍 Earth (beats Water)
-  - 💨 Air (beats Earth)
-- First player to win 2 rounds wins the game
-- Winner takes 98% of the total stake (2% platform fee)
-- In case of a tie (1-1-1), both players get their stake back
-
-## How to Play
-
-1. Connect your MetaMask wallet (Base Sepolia network)
-2. Create a game:
-   - Set your stake amount
-   - Click "Create Game"
-   - Share the game link with your opponent
-3. Join a game:
-   - Use a shared game link or enter Game ID
-   - Match the stake amount
-4. Battle:
-   - Select your three moves
-   - Commit your moves
-   - Wait for opponent to commit
-   - Reveal your moves
-   - Wait for the result!
-
-## Development
+First, run the development server:
 
 ```bash
-# Install dependencies
-npm install
-
-# Run development server
 npm run dev
-
-# Build for production
-npm run build
-
-# Start production server
-npm start
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-## Smart Contract
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-The game runs on a Solidity smart contract deployed to Base Sepolia:
-- Contract Address: `0x56f9d5cb76e854167891cbce3635eceff`
-- Network: Base Sepolia (Chain ID: 84532)
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-## Technologies
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-- Next.js 14
-- TypeScript
-- Ethers.js
-- Solidity
-- Hardhat
-- TailwindCSS
+## Learn More
 
-## License
+To learn more about Next.js, take a look at the following resources:
 
-MIT
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

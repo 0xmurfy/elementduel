@@ -119,5 +119,152 @@ export const BLOCKDUEL_ABI = [
     ],
     "stateMutability": "view",
     "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "nextGameId",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+];
+
+export const ELEMENTALDUEL_ADDRESS = '0x56f9d5cb76e854167891cbce3635eceff';
+
+export const ELEMENTALDUEL_ABI = [
+  {
+    "inputs": [],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "createGame",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "gameId",
+        "type": "uint256"
+      }
+    ],
+    "name": "joinGame",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "gameId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes32[3]",
+        "name": "moveHashes",
+        "type": "bytes32[3]"
+      }
+    ],
+    "name": "commitMoves",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "gameId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint8[3]",
+        "name": "elements",
+        "type": "uint8[3]"
+      },
+      {
+        "internalType": "bytes32[3]",
+        "name": "salts",
+        "type": "bytes32[3]"
+      }
+    ],
+    "name": "revealMoves",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "gameId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getGameState",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "player1",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "player2",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "stake",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint8",
+        "name": "state",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint256",
+        "name": "player1Wins",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "player2Wins",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "gameId",
+        "type": "uint256"
+      }
+    ],
+    "name": "claimTimeout",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
   }
 ]; 
